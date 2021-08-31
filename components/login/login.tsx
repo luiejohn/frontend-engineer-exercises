@@ -35,6 +35,7 @@ const Login: FC = () => {
       const { data } = await userLogin({ variables: { input: formData } });
       const { authenticate } = data;
       dispatch(setLogin(authenticate.token));
+      localStorage.setItem('token', authenticate.token);
     } catch (error) {}
 
     return;

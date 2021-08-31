@@ -46,7 +46,9 @@ const Card: FC<IProps> = ({ info }) => {
                 ⋮
               </MenuButton>
               <MenuList w="100px">
-                <MenuItem>Edit</MenuItem>
+                <Link href={`products/edit/${info.node.id}`}>
+                  <MenuItem>Edit</MenuItem>
+                </Link>
                 <MenuItem>Delete</MenuItem>
               </MenuList>
             </Menu>

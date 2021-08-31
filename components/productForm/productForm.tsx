@@ -1,5 +1,6 @@
 import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Link from 'next/link';
 import { FC } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -13,6 +14,13 @@ interface IProps {
   onSubmit: SubmitHandler<IFormDataProps>;
   isAdd?: boolean;
   isEdit?: boolean;
+  data?: {
+    node: {
+      description: string;
+      id: string;
+      name: string;
+    };
+  };
 }
 
 const schema = yup.object().shape({
@@ -20,7 +28,7 @@ const schema = yup.object().shape({
   description: yup.string().required('This field is required'),
 });
 
-const ProductForm: FC<IProps> = ({ onSubmit }) => {
+const ProductForm: FC<IProps> = ({ onSubmit, data }) => {
   const {
     register,
     handleSubmit,
@@ -58,7 +66,7 @@ const ProductForm: FC<IProps> = ({ onSubmit }) => {
             <Box mb={5}>
               <FormControl>
                 <FormLabel mb={3}>Title</FormLabel>
-                <Input type="text" placeholder="Enter title" {...register('name')} />
+                <Input type="text" placeholder="Enter title" {...register('name')} defaultValue={data?.node.name} />
                 {errors.name && (
                   <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
                     {errors.name.message}
@@ -69,7 +77,11 @@ const ProductForm: FC<IProps> = ({ onSubmit }) => {
             <Box mb={5}>
               <FormControl>
                 <FormLabel mb={3}>Description</FormLabel>
-                <Textarea placeholder="Enter description" {...register('description')} />
+                <Textarea
+                  placeholder="Enter description"
+                  {...register('description')}
+                  defaultValue={data?.node.description}
+                />
                 {errors.description && (
                   <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
                     {errors.description.message}
@@ -79,9 +91,12 @@ const ProductForm: FC<IProps> = ({ onSubmit }) => {
             </Box>
           </Box>
           <Flex justifyContent="flex-end">
-            <Button marginRight={4} w="175px">
-              Cancel
-            </Button>
+            <Link href="/products">
+              <Button marginRight={4} w="175px">
+                Cancel
+              </Button>
+            </Link>
+
             <Button w="175px" bgColor="#805AD5" color="#fff" p="10px 0" type="submit">
               Submit
             </Button>

@@ -49,22 +49,13 @@ export const GET_PRODUCTS = gql`
   }
 `;
 
-export const GET_PRODUCTS_ID = gql`
-  query Products(
-    $first: Int
-    $after: Binary
-    $last: Int
-    $before: Binary
-    $filter: ProductsFilter
-    $sort: ProductSortInput
-  ) {
-    products(first: $first, after: $after, last: $last, before: $before, filter: $filter, sort: $sort) {
-      edges {
-        node {
-          ... on Product {
-            id
-          }
-        }
+export const GET_PRODUCTS_BYID = gql`
+  query getProduct($id: Binary!) {
+    node(id: $id) {
+      ... on Product {
+        id
+        name
+        description
       }
     }
   }

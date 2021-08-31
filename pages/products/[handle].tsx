@@ -1,38 +1,81 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { useQuery } from '@apollo/client';
+import { ChevronRightIcon } from '@chakra-ui/icons';
+import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, Image, Spinner, Text } from '@chakra-ui/react';
 import Layout from '@components/Layout';
+import { GET_PRODUCTS } from 'graphql/queries';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FC } from 'react';
 
-// interface ProductNode {
-//   id: string;
-// }
-// interface ProductHandle {
-//   node: ProductNode;
-// }
-
 const ItemPage: FC = () => {
+  const router = useRouter();
+  const { handle } = router.query;
+  const { data } = useQuery(GET_PRODUCTS, { variables: { filter: { id: { eq: handle } } } });
+
   return (
     <Layout>
-      <Flex mt={90} flexDirection="column" flex="1">
-        <Box>Products ReactJS</Box>
-        <Flex border="1px solid red">
-          <Box>
-            <Box width="393px" height="300px" border="1px solid green">
-              Image
-            </Box>
-            <Box>Cart Button</Box>
-          </Box>
-
-          <Box ml={5}>
-            <Box mb={5} fontSize="30px" fontWeight="700">
-              Title
-            </Box>
-            <Box>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, voluptate vero? Itaque laborum cumque
-              autem tenetur neque aliquid magni animi quam soluta, voluptatum, ullam iure est veniam illo numquam sint?
-            </Box>
-          </Box>
+      {!data ? (
+        <Flex justifyContent="center" alignItems="center" w="100%" h="100%">
+          <Spinner size="xl" />
         </Flex>
-      </Flex>
+      ) : (
+        <Flex mt={90} flexDirection="column" flex="1">
+          <Breadcrumb separator={<ChevronRightIcon color="gray.500" width={6} height={10} />}>
+            <BreadcrumbItem>
+              <Link href="/products">
+                <Text color="gray.400" fontWeight={500} cursor="pointer">
+                  Products
+                </Text>
+              </Link>
+            </BreadcrumbItem>
+
+            <BreadcrumbItem isCurrentPage>
+              <BreadcrumbLink href="#" color="gray.400" fontWeight={500}>
+                Edit Product
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </Breadcrumb>
+          <Flex>
+            <Box>
+              <Box width="393px" height="300px">
+                <Image
+                  borderRadius="8px"
+                  width="100%"
+                  height="100%"
+                  src="https://images.unsplash.com/photo-1581276879432-15e50529f34b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                  alt="card-image"
+                />
+              </Box>
+
+              <Button bgColor="#FAF5FF" color="#553C9A" mt={5} w="100%">
+                Cart Button
+              </Button>
+            </Box>
+
+            <Box ml={5} flex="1">
+              <Box mb={5}>
+                <Flex justifyContent="space-between" alignItems="center">
+                  <Box fontSize="30px" fontWeight="700" borderRadius="6px">
+                    {data?.products.edges[0].node.name}
+                  </Box>
+                  <Flex>
+                    <Link href={`/products/edit/${handle}`}>
+                      <Box mr={4} p={3} bgColor="#EDF2F7">
+                        Edit
+                      </Box>
+                    </Link>
+
+                    <Box p={3} bgColor="#EDF2F7" borderRadius="6px">
+                      Delete
+                    </Box>
+                  </Flex>
+                </Flex>
+              </Box>
+              <Box mb={5}>{data?.products.edges[0].node.description}</Box>
+            </Box>
+          </Flex>
+        </Flex>
+      )}
     </Layout>
   );
 };
