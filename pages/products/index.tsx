@@ -1,76 +1,72 @@
+import { useQuery } from '@apollo/client';
 import { Divider, Heading } from '@chakra-ui/layout';
-import { Grid } from '@chakra-ui/react';
+import { Button, Flex, Grid, Spinner } from '@chakra-ui/react';
 import Card from '@components/card/card';
 import Layout from '@components/Layout';
 import Pagination from '@components/pagination/pagination';
-import { FC } from 'react';
+import Link from 'next/link';
+import { FC, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/store';
+import { GET_PRODUCTS } from '../../graphql/queries';
 
-const mockData = [
-  {
-    title: 'Sample Title',
-    desc: 'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Laudantium deserunt error, autem ad aut doloribus ipsam vero quidem recusandae tempora aspernatur maiores ut velit nihil sint nobis? Delectus, perferendis nobis.',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
+export interface IProduct {
+  id?: string;
+  name: string;
+  description: string;
+}
+export interface IProductEdge {
+  cursor: string;
+  node: IProduct;
+}
 
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-  {
-    title: 'Sample Title',
-    desc: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque laboriosam blanditiis doloremque ad odit! Iure illum, dolorem officiis molestiae adipisci eveniet commodi laboriosam suscipit velit fugit necessitatibus, porro voluptates eum!',
-  },
-];
+const Products: FC = () => {
+  const [products, setProducts] = useState<IProductEdge[]>([]);
+  const [currentPage, setCurrentPage] = useState(undefined);
+  const { isLogin } = useSelector((state: RootState) => state.login);
 
-const Products: FC = () => (
-  <Layout>
-    <Heading mt={39} mb={5}>
-      Products
-    </Heading>
-    <Divider mb={13} />
+  const { data } = useQuery(GET_PRODUCTS, { fetchPolicy: 'cache-and-network', variables: { first: 12 } });
 
-    <Grid gridTemplateColumns="repeat(4, 1fr)" gridGap={5} mb={10}>
-      {mockData.map((item, index) => (
-        <Card key={index} info={item} />
-      ))}
-    </Grid>
-    <Pagination />
-  </Layout>
-);
+  useEffect(() => {
+    if (data) {
+      setProducts(data.products.edges);
+      setCurrentPage(data.products.pageInfo);
+    }
+  }, [data]);
+
+  return (
+    <Layout>
+      <Flex justifyContent="space-between" mt={39}>
+        <Heading mb={5}>Products</Heading>
+
+        {isLogin ? (
+          <Flex mb={2} alignSelf="flex-end">
+            <Link href="/products/add">
+              <Button bgColor="#805AD5" color="#fff">
+                Add Products
+              </Button>
+            </Link>
+          </Flex>
+        ) : null}
+      </Flex>
+
+      <Divider mb={13} bgColor="#E2E8F0" />
+
+      {products.length === 0 ? (
+        <Flex justifyContent="center" alignItems="center" w="100%" h="100%">
+          <Spinner size="xl" />
+        </Flex>
+      ) : (
+        <Grid gridTemplateColumns="repeat(4, 1fr)" gridGap={5} mb={10}>
+          {products.map((item, index) => (
+            <Card key={index} info={item} />
+          ))}
+        </Grid>
+      )}
+
+      <Pagination pageDetails={currentPage} />
+    </Layout>
+  );
+};
 
 export default Products;

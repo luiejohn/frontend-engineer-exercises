@@ -1,13 +1,22 @@
+import { useMutation } from '@apollo/client';
 import { Box, Button, Divider, Flex, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FC } from 'react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { setLogin } from 'redux/login/login';
 import * as yup from 'yup';
+import { USER_LOGIN } from '../../graphql/queries';
 
 const schema = yup.object().shape({
-  email: yup.string().required('This field is required'),
+  emailAddress: yup.string().required('This field is required'),
   password: yup.string().required('This field is required'),
 });
+
+interface IFormDataProps {
+  emailAddress: string;
+  password: string;
+}
 
 const Login: FC = () => {
   const {
@@ -18,9 +27,15 @@ const Login: FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
-    console.log('reaad');
+  const dispatch = useDispatch();
+  const [userLogin] = useMutation(USER_LOGIN);
+
+  const onSubmit: SubmitHandler<IFormDataProps> = async (formData) => {
+    try {
+      const { data } = await userLogin({ variables: { input: formData } });
+      const { authenticate } = data;
+      dispatch(setLogin(authenticate.token));
+    } catch (error) {}
 
     return;
   };
@@ -47,10 +62,10 @@ const Login: FC = () => {
             <Flex flexDirection="column">
               <FormControl mb={5}>
                 <FormLabel>Email</FormLabel>
-                <Input type="email" placeholder="example@email.com" {...register('email')} />
-                {errors.email && (
+                <Input type="email" placeholder="example@email.com" {...register('emailAddress')} />
+                {errors.emailAddress && (
                   <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
-                    {errors.email.message}
+                    {errors.emailAddress.message}
                   </Box>
                 )}
               </FormControl>

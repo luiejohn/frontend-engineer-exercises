@@ -1,15 +1,27 @@
+import { useMutation } from '@apollo/client';
 import { Box, Button, Divider, Flex, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FC } from 'react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { setLogin } from 'redux/login/login';
 import * as yup from 'yup';
+import { USER_SIGN_UP } from '../../graphql/queries';
 
 const SignupSchema = yup.object().shape({
-  firstName: yup.string().required('This field is required'),
-  lastName: yup.string().required('This field is required'),
-  email: yup.string().required('This field is required'),
+  firstname: yup.string().required('This field is required'),
+  lastname: yup.string().required('This field is required'),
+  emailAddress: yup.string().required('This field is required'),
   password: yup.string().required('This field is required').min(6),
 });
+
+interface IFormDataProps {
+  firstname: string;
+  lastname: string;
+  emailAddress: string;
+  password: string;
+  confirmPassword?: string;
+}
 
 const SignupPage: FC = () => {
   const {
@@ -20,8 +32,16 @@ const SignupPage: FC = () => {
     resolver: yupResolver(SignupSchema),
   });
 
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
+  const dispatch = useDispatch();
+  const [userSignUp] = useMutation(USER_SIGN_UP);
+
+  const onSubmit: SubmitHandler<IFormDataProps> = async (signupData) => {
+    try {
+      delete signupData.confirmPassword;
+      const { data } = await userSignUp({ variables: { input: signupData } });
+      const { signUp } = data;
+      dispatch(setLogin(signUp.token));
+    } catch (error) {}
   };
 
   return (
@@ -42,28 +62,28 @@ const SignupPage: FC = () => {
             <Flex flexDirection="column">
               <FormControl mb={5} position="relative">
                 <FormLabel>First Name</FormLabel>
-                <Input {...register('firstName')} type="text" placeholder="Enter First Name" />
-                {errors.firstName && (
+                <Input {...register('firstname')} type="text" placeholder="Enter First Name" />
+                {errors.firstname && (
                   <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
-                    {errors.firstName.message}
+                    {errors.firstname.message}
                   </Box>
                 )}
               </FormControl>
               <FormControl mb={5} position="relative">
                 <FormLabel>Last Name</FormLabel>
-                <Input {...register('lastName')} type="text" placeholder="Enter Last Name" />
-                {errors.lastName && (
+                <Input {...register('lastname')} type="text" placeholder="Enter Last Name" />
+                {errors.lastname && (
                   <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
-                    {errors.lastName.message}
+                    {errors.lastname.message}
                   </Box>
                 )}
               </FormControl>
               <FormControl mb={5} position="relative">
                 <FormLabel>Email</FormLabel>
-                <Input {...register('email')} type="email" placeholder="example@email.com" />
-                {errors.email && (
+                <Input {...register('emailAddress')} type="email" placeholder="example@email.com" />
+                {errors.emailAddress && (
                   <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
-                    {errors.email.message}
+                    {errors.emailAddress.message}
                   </Box>
                 )}
               </FormControl>
@@ -78,7 +98,7 @@ const SignupPage: FC = () => {
               </FormControl>
               <FormControl mb={5} position="relative">
                 <FormLabel>Confirm Password</FormLabel>
-                <Input {...register('password')} type="password" placeholder="**********" />
+                <Input {...register('confirmPassword')} type="password" placeholder="**********" />
               </FormControl>
             </Flex>
 
@@ -91,24 +111,5 @@ const SignupPage: FC = () => {
     </Flex>
   );
 };
-
-// export const getStaticProps = async () => {
-//   const { data, loading } = await client.query({
-//     query: signUp,
-//     variables: {
-//       emailAddress: 'test.232@gmail.com',
-//       firstname: 'testing',
-//       lastname: 'thelastname',
-//       password: '12345678',
-//     },
-//   });
-//   console.log(loading);
-//   console.log(data);
-
-//   return {
-//     props: {
-//     },
-//   };
-// };
 
 export default SignupPage;

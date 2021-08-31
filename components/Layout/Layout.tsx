@@ -8,7 +8,7 @@ interface IProps {
   minHeight?: string;
 }
 
-const ROUTES_TO_RETAIN_FOOTER = ['/products', '/products/[handle]'];
+const ROUTES_TO_RETAIN_FOOTER = ['/products', '/products/[handle]', '/products/add'];
 
 const Layout: FC<IProps> = ({ children }) => {
   const router = useRouter();

@@ -2,7 +2,16 @@ import { Box } from '@chakra-ui/layout';
 import { Divider, Flex } from '@chakra-ui/react';
 import { FC } from 'react';
 
-const Pagination: FC = () => {
+interface IProps {
+  pageDetails?: {
+    endCursor: string;
+    startCursor: string;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+const Pagination: FC<IProps> = () => {
   return (
     <Box>
       <Divider />
