@@ -23,6 +23,7 @@ export const loginSlice = createSlice({
       state.token = action.payload;
     },
     setLogout: (state) => {
+      localStorage.removeItem('token');
       state.isLogin = false;
       state.token = null;
     },

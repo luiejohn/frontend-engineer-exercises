@@ -36,15 +36,4 @@ const Home: FC = () => {
   }
 };
 
-// export const getServerSideProps = async () => {
-//   const res = await fetch('https://.../data')
-//   const data: Data = await res.json()
-
-//   return {
-//     props: {
-//       data,
-//     },
-//   }
-// }
-
 export default Home;

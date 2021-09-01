@@ -17,6 +17,7 @@ import {
 import { DELETE_PRODUCT, GET_PRODUCTS } from 'graphql/queries';
 import Link from 'next/link';
 import { FC, useState } from 'react';
+import { BiCartAlt, BiDotsVerticalRounded } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 
@@ -83,8 +84,10 @@ const Card: FC<IProps> = ({ info }) => {
         {isLogin && (
           <Box position="absolute" top={5} right={5}>
             <Menu>
-              <MenuButton as={Button} borderRadius="50%" fontSize="23px" fontWeight="800">
-                ⋮
+              <MenuButton as={Button} borderRadius="50%" fontWeight="800" width="32px" height="32px" bgColor="#EDF2F7">
+                <Flex fontSize="20px" justifyContent="center" alignItems="stretch">
+                  <BiDotsVerticalRounded />
+                </Flex>
               </MenuButton>
               <MenuList w="100px">
                 <Link href={`products/edit/${info.node.id}`}>
@@ -99,7 +102,7 @@ const Card: FC<IProps> = ({ info }) => {
       <Flex p={5} flexDirection="column" justifyContent="space-between" flex="1">
         <Box>
           <Link key={info.node.id} href={`/products/${info.node.id}`}>
-            <Box fontSize="18px" fontWeight="700">
+            <Box fontSize="18px" fontWeight="700" cursor="pointer">
               {info.node.name}
             </Box>
           </Link>
@@ -108,7 +111,15 @@ const Card: FC<IProps> = ({ info }) => {
           </Box>
         </Box>
 
-        <Button bgColor="#FAF5FF" p="8px 0" borderRadius="5px" color="#553C9A" fontWeight="600" lineHeight="24px">
+        <Button
+          leftIcon={<BiCartAlt />}
+          bgColor="#FAF5FF"
+          p="8px 0"
+          borderRadius="5px"
+          color="#553C9A"
+          fontWeight="600"
+          lineHeight="24px"
+        >
           Add Cart
         </Button>
 

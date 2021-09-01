@@ -1,8 +1,9 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Input, Text, Textarea } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { FC } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { BiImageAdd } from 'react-icons/bi';
 import * as yup from 'yup';
 
 interface IFormDataProps {
@@ -47,8 +48,21 @@ const ProductForm: FC<IProps> = ({ onSubmit, data }) => {
       <Flex p={7}>
         <Box>
           <Box mb={3}>Photo</Box>
-          <Flex width="393px" height="300px" border="2px dashed #ccc" justifyContent="center" alignItems="center">
-            {/* <FileUpload accept={'image/*'} multiple /> */}
+          <Flex
+            width="393px"
+            height="300px"
+            border="2px dashed #ccc"
+            justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
+          >
+            <Box>
+              <BiImageAdd fontSize="45px" color="#9CA3AF" />
+            </Box>
+            <Box>
+              <span style={{ color: '#6B46C1' }}>Upload a file</span> or drag and drop
+            </Box>
+            <Text fontSize="12px">PNG, JPG, GIF, up to 10MB</Text>
           </Flex>
         </Box>
 

@@ -1,16 +1,63 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { ChevronRightIcon } from '@chakra-ui/icons';
-import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, Image, Spinner, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  Button,
+  Flex,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import Layout from '@components/Layout';
-import { GET_PRODUCTS_BYID } from 'graphql/queries';
+import { DELETE_PRODUCT, GET_PRODUCTS_BYID } from 'graphql/queries';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { FC } from 'react';
+import Router, { useRouter } from 'next/router';
+import { FC, useState } from 'react';
+import { BiCartAlt, BiEdit, BiTrash } from 'react-icons/bi';
+import { useSelector } from 'react-redux';
+import { RootState } from 'redux/store';
 
+type DeleteFn = () => Promise<void>;
 const ItemPage: FC = () => {
+  const { isLogin } = useSelector((state: RootState) => state.login);
+  const [isModal, setModal] = useState(false);
   const router = useRouter();
   const { handle } = router.query;
   const { data } = useQuery(GET_PRODUCTS_BYID, { variables: { id: handle } });
+  const [deleteProduct] = useMutation(DELETE_PRODUCT);
+
+  const toast = useToast();
+  const handleDeleteProduct: DeleteFn = async () => {
+    try {
+      await deleteProduct({ variables: { input: { id: handle } } });
+      toast({
+        title: `Successfully deleted the product!`,
+        isClosable: true,
+        status: 'success',
+        position: 'top-right',
+      });
+      setModal(false);
+      await Router.push('/products');
+    } catch (error) {
+      toast({
+        title: error.message,
+        status: 'error',
+        position: 'top',
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Layout>
@@ -47,8 +94,8 @@ const ItemPage: FC = () => {
                 />
               </Box>
 
-              <Button bgColor="#FAF5FF" color="#553C9A" mt={5} w="100%">
-                Cart Button
+              <Button leftIcon={<BiCartAlt />} bgColor="#FAF5FF" color="#553C9A" mt={5} p="10px 0" w="100%">
+                Add to cart
               </Button>
             </Box>
 
@@ -58,21 +105,46 @@ const ItemPage: FC = () => {
                   <Box fontSize="30px" fontWeight="700" borderRadius="6px">
                     {data?.node.name}
                   </Box>
-                  <Flex>
-                    <Link href={`/products/edit/${handle}`}>
-                      <Box mr={4} p={3} bgColor="#EDF2F7">
-                        Edit
-                      </Box>
-                    </Link>
+                  {isLogin && (
+                    <Flex>
+                      <Link href={`/products/edit/${handle}`}>
+                        <Box mr={4} p={4} bgColor="#EDF2F7" borderRadius="6px" cursor="pointer">
+                          <BiEdit />
+                        </Box>
+                      </Link>
 
-                    <Box p={3} bgColor="#EDF2F7" borderRadius="6px">
-                      Delete
-                    </Box>
-                  </Flex>
+                      <Box
+                        p={4}
+                        bgColor="#EDF2F7"
+                        borderRadius="6px"
+                        cursor="pointer"
+                        onClick={(): void => setModal(true)}
+                      >
+                        <BiTrash />
+                      </Box>
+                    </Flex>
+                  )}
                 </Flex>
               </Box>
               <Box mb={5}>{data?.node.description}</Box>
             </Box>
+            <Modal isOpen={isModal} onClose={(): void => setModal(false)} isCentered>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Delete Product</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>Are you sure you want to delete this product? You can't undo this afterwards</ModalBody>
+
+                <ModalFooter>
+                  <Button variant="ghost" mr={3} onClick={(): void => setModal(false)}>
+                    Close
+                  </Button>
+                  <Button variant="solid" onClick={handleDeleteProduct} bgColor="#E53E3E" color="#fff">
+                    Delete
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
           </Flex>
         </Flex>
       )}
