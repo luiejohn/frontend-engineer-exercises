@@ -115,7 +115,7 @@ const Card: FC<IProps> = ({ info }) => {
         <Modal isOpen={isModal} onClose={(): void => setModal(false)} isCentered>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Modal Title</ModalHeader>
+            <ModalHeader>Delete Product</ModalHeader>
             <ModalCloseButton />
             <ModalBody>Are you sure you want to delete this product? You can't undo this afterwards</ModalBody>
 
