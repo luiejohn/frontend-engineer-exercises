@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 import { Box, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Flex, Image, Spinner, Text } from '@chakra-ui/react';
 import Layout from '@components/Layout';
-import { GET_PRODUCTS } from 'graphql/queries';
+import { GET_PRODUCTS_BYID } from 'graphql/queries';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
@@ -10,7 +10,7 @@ import { FC } from 'react';
 const ItemPage: FC = () => {
   const router = useRouter();
   const { handle } = router.query;
-  const { data } = useQuery(GET_PRODUCTS, { variables: { filter: { id: { eq: handle } } } });
+  const { data } = useQuery(GET_PRODUCTS_BYID, { variables: { id: handle } });
 
   return (
     <Layout>
@@ -31,7 +31,7 @@ const ItemPage: FC = () => {
 
             <BreadcrumbItem isCurrentPage>
               <BreadcrumbLink href="#" color="gray.400" fontWeight={500}>
-                Edit Product
+                {data?.node.name}
               </BreadcrumbLink>
             </BreadcrumbItem>
           </Breadcrumb>
@@ -56,7 +56,7 @@ const ItemPage: FC = () => {
               <Box mb={5}>
                 <Flex justifyContent="space-between" alignItems="center">
                   <Box fontSize="30px" fontWeight="700" borderRadius="6px">
-                    {data?.products.edges[0].node.name}
+                    {data?.node.name}
                   </Box>
                   <Flex>
                     <Link href={`/products/edit/${handle}`}>
@@ -71,7 +71,7 @@ const ItemPage: FC = () => {
                   </Flex>
                 </Flex>
               </Box>
-              <Box mb={5}>{data?.products.edges[0].node.description}</Box>
+              <Box mb={5}>{data?.node.description}</Box>
             </Box>
           </Flex>
         </Flex>

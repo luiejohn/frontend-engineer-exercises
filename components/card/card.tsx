@@ -1,8 +1,22 @@
+import { useMutation } from '@apollo/client';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/menu';
-import { Button, Image, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
+import { DELETE_PRODUCT, GET_PRODUCTS } from 'graphql/queries';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 
@@ -20,8 +34,35 @@ interface IProps {
   info: IPropsDetails;
 }
 
+type DeleteFn = () => Promise<void>;
+
 const Card: FC<IProps> = ({ info }) => {
   const { isLogin } = useSelector((state: RootState) => state.login);
+  const [isModal, setModal] = useState(false);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT, {
+    refetchQueries: [GET_PRODUCTS, 'Products'],
+  });
+
+  const toast = useToast();
+  const handleDeleteProduct: DeleteFn = async () => {
+    try {
+      await deleteProduct({ variables: { input: { id: info.node.id } } });
+      toast({
+        title: `Successfully deleted the product!`,
+        isClosable: true,
+        status: 'success',
+        position: 'top-right',
+      });
+      setModal(false);
+    } catch (error) {
+      toast({
+        title: error.message,
+        status: 'error',
+        position: 'top',
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Flex
@@ -49,7 +90,7 @@ const Card: FC<IProps> = ({ info }) => {
                 <Link href={`products/edit/${info.node.id}`}>
                   <MenuItem>Edit</MenuItem>
                 </Link>
-                <MenuItem>Delete</MenuItem>
+                <MenuItem onClick={(): void => setModal(true)}>Delete</MenuItem>
               </MenuList>
             </Menu>
           </Box>
@@ -70,6 +111,24 @@ const Card: FC<IProps> = ({ info }) => {
         <Button bgColor="#FAF5FF" p="8px 0" borderRadius="5px" color="#553C9A" fontWeight="600" lineHeight="24px">
           Add Cart
         </Button>
+
+        <Modal isOpen={isModal} onClose={(): void => setModal(false)} isCentered>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Modal Title</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>Are you sure you want to delete this product? You can't undo this afterwards</ModalBody>
+
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={(): void => setModal(false)}>
+                Close
+              </Button>
+              <Button variant="solid" onClick={handleDeleteProduct} bgColor="#E53E3E" color="#fff">
+                Delete
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Flex>
     </Flex>
   );

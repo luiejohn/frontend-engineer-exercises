@@ -10,18 +10,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { GET_PRODUCTS } from '../../graphql/queries';
 
-export interface IProduct {
-  id?: string;
-  name: string;
-  description: string;
-}
-export interface IProductEdge {
-  cursor: string;
-  node: IProduct;
-}
-
 const Products: FC = () => {
   const { isLogin } = useSelector((state: RootState) => state.login);
+
   const { data } = useQuery(GET_PRODUCTS, { fetchPolicy: 'cache-and-network', variables: { first: 12 } });
 
   return (
@@ -54,6 +45,7 @@ const Products: FC = () => {
                 <Card key={index} info={item} />
               ))}
             </Grid>
+
             <Pagination pageDetails={data.products.pageInfo} />
           </Box>
         )}
