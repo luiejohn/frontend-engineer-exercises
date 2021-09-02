@@ -1,4 +1,17 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, Text, Textarea } from '@chakra-ui/react';
+import { ChevronRightIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  Text,
+  Textarea,
+} from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -13,7 +26,6 @@ interface IFormDataProps {
 
 interface IProps {
   onSubmit: SubmitHandler<IFormDataProps>;
-  isAdd?: boolean;
   isEdit?: boolean;
   data?: {
     node: {
@@ -29,7 +41,7 @@ const schema = yup.object().shape({
   description: yup.string().required('This field is required'),
 });
 
-const ProductForm: FC<IProps> = ({ onSubmit, data }) => {
+const ProductForm: FC<IProps> = ({ onSubmit, data, isEdit }) => {
   const {
     register,
     handleSubmit,
@@ -39,13 +51,23 @@ const ProductForm: FC<IProps> = ({ onSubmit, data }) => {
   });
 
   return (
-    <Flex
-      mt={90}
-      flexDirection="column"
-      boxShadow="0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06)"
-      bgColor="#fff"
-    >
-      <Flex p={7}>
+    <Flex mt={90} flexDirection="column" flex="1">
+      <Breadcrumb separator={<ChevronRightIcon color="gray.500" width={6} height={10} />}>
+        <BreadcrumbItem>
+          <Link href="/products">
+            <Text color="gray.400" fontWeight={500} cursor="pointer">
+              Products
+            </Text>
+          </Link>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem isCurrentPage>
+          <BreadcrumbLink href="#" color="gray.400" fontWeight={500}>
+            {isEdit ? 'Edit Product' : 'Add Product'}
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
+      <Flex boxShadow="0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06)" bgColor="#fff" p={7}>
         <Box>
           <Box mb={3}>Photo</Box>
           <Flex
@@ -72,6 +94,7 @@ const ProductForm: FC<IProps> = ({ onSubmit, data }) => {
             width: '100%',
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'stretch',
             flexDirection: 'column',
             marginLeft: '30px',
           }}
@@ -88,7 +111,7 @@ const ProductForm: FC<IProps> = ({ onSubmit, data }) => {
                 )}
               </FormControl>
             </Box>
-            <Box mb={5}>
+            <Box mb={5} flex="1">
               <FormControl>
                 <FormLabel mb={3}>Description</FormLabel>
                 <Textarea

@@ -8,11 +8,11 @@ interface IProps {
   minHeight?: string;
 }
 
-const ROUTES_TO_RETAIN_FOOTER = ['/products', '/products/[handle]', '/products/add', '/products/edit/[handle]'];
+export const ROUTES = ['/products', '/products/[handle]', '/products/add', '/products/edit/[handle]'];
 
 const Layout: FC<IProps> = ({ children }) => {
   const router = useRouter();
-  const isRetainableRoute = ROUTES_TO_RETAIN_FOOTER.includes(router.pathname);
+  const isRetainableRoute = ROUTES.includes(router.pathname);
 
   return (
     <Flex height="100vh" bgColor="#f7fafc" flexDirection="column" overflowY="scroll" alignItems="stretch">

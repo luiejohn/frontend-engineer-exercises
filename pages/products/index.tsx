@@ -6,15 +6,60 @@ import Card from '@components/card/card';
 import Layout from '@components/Layout';
 import Pagination from '@components/pagination/pagination';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 import { GET_PRODUCTS } from '../../graphql/queries';
 
+export interface IProduct {
+  id?: string;
+  name: string;
+  description: string;
+  imageUrl?: string;
+  imageAlt?: string;
+}
+
+export interface IProductEdge {
+  cursor: string;
+  node: IProduct;
+}
+
+const setProductPages = (products: IProductEdge[]): Array<IProductEdge[]> => {
+  let limit = 1,
+    productPage: Array<IProductEdge> = [],
+    productPages: Array<IProductEdge[]> = [];
+
+  products.map((product: IProductEdge, i: number) => {
+    productPage = [...productPage, product];
+
+    if (limit === 12) {
+      productPages = [...productPages, productPage];
+      productPage = [];
+      limit = 0;
+    }
+
+    if (products.length === i + 1 && limit < 12) {
+      productPages = [...productPages, productPage];
+    }
+
+    limit++;
+  });
+
+  return productPages;
+};
+
 const Products: FC = () => {
   const { isLogin } = useSelector((state: RootState) => state.login);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [products, setProducts] = useState<Array<IProductEdge[]>>([[]]);
 
-  const { data } = useQuery(GET_PRODUCTS, { fetchPolicy: 'cache-and-network', variables: { first: 12 } });
+  const { data } = useQuery(GET_PRODUCTS, { fetchPolicy: 'cache-and-network', variables: { first: 1000 } });
+
+  useEffect(() => {
+    if (data) {
+      setProducts(setProductPages(data.products.edges));
+    }
+  }, [data]);
 
   return (
     <Layout>
@@ -42,12 +87,14 @@ const Products: FC = () => {
         ) : (
           <Box>
             <Grid gridTemplateColumns="repeat(4, 1fr)" gridGap={5} mb={10}>
-              {data.products.edges.map((item, index) => (
+              {products[currentPage - 1].map((item, index) => (
                 <Card key={index} info={item} />
               ))}
             </Grid>
-
-            <Pagination pageDetails={data.products.pageInfo} />
+            <Pagination
+              total={data ? data.products.edges.length : 0}
+              onPageNumber={(pageNumber: number): void => setCurrentPage(pageNumber)}
+            />
           </Box>
         )}
       </Flex>

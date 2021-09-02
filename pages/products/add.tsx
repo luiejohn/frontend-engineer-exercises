@@ -19,14 +19,6 @@ interface IFormDataProps {
 }
 
 const AddItemPage: FC = () => {
-  //   const {
-  //     register,
-  //     handleSubmit,
-  //     formState: { errors },
-  //   } = useForm({
-  //     resolver: yupResolver(schema),
-  //   });
-
   const [addProduct] = useMutation(CREATE_PRODUCT);
   const toast = useToast();
 

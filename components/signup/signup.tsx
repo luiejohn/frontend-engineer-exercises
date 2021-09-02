@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { Box, Button, Divider, Flex, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Router from 'next/router';
 import { FC } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
@@ -13,6 +14,10 @@ const SignupSchema = yup.object().shape({
   lastname: yup.string().required('This field is required'),
   emailAddress: yup.string().required('This field is required'),
   password: yup.string().required('This field is required').min(6),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], "Passwords don't match")
+    .required('Confirm Password is required'),
 });
 
 interface IFormDataProps {
@@ -41,6 +46,8 @@ const SignupPage: FC = () => {
       const { data } = await userSignUp({ variables: { input: signupData } });
       const { signUp } = data;
       dispatch(setLogin(signUp.token));
+      localStorage.setItem('token', signUp.token);
+      await Router.push('/products');
     } catch (error) {}
   };
 
@@ -59,7 +66,7 @@ const SignupPage: FC = () => {
         <Divider orientation="horizontal" />
         <form onSubmit={handleSubmit(onSubmit)}>
           <Flex padding={7} flexDirection="column" justifyContent="space-between" height="100%">
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" mb={5}>
               <FormControl mb={5} position="relative">
                 <FormLabel>First Name</FormLabel>
                 <Input {...register('firstname')} type="text" placeholder="Enter First Name" />
@@ -99,6 +106,11 @@ const SignupPage: FC = () => {
               <FormControl mb={5} position="relative">
                 <FormLabel>Confirm Password</FormLabel>
                 <Input {...register('confirmPassword')} type="password" placeholder="**********" />
+                {errors.confirmPassword && (
+                  <Box fontSize="12px" position="absolute" left="3px" bottom="-19px" color="#ff6666">
+                    {errors.confirmPassword.message}
+                  </Box>
+                )}
               </FormControl>
             </Flex>
 

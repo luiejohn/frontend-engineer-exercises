@@ -3,6 +3,7 @@ import { Box, Flex } from '@chakra-ui/layout';
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/menu';
 import {
   Button,
+  IconButton,
   Image,
   Modal,
   ModalBody,
@@ -76,6 +77,7 @@ const Card: FC<IProps> = ({ info }) => {
     >
       <Box h="170px" w="100%" position="relative">
         <Image
+          fallbackSrc="https://user-images.githubusercontent.com/2351721/31314483-7611c488-ac0e-11e7-97d1-3cfc1c79610e.png"
           width="100%"
           height="100%"
           src="https://images.unsplash.com/photo-1581276879432-15e50529f34b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
@@ -84,12 +86,15 @@ const Card: FC<IProps> = ({ info }) => {
         {isLogin && (
           <Box position="absolute" top={5} right={5}>
             <Menu>
-              <MenuButton as={Button} borderRadius="50%" fontWeight="800" width="32px" height="32px" bgColor="#EDF2F7">
-                <Flex fontSize="20px" justifyContent="center" alignItems="stretch">
-                  <BiDotsVerticalRounded />
-                </Flex>
-              </MenuButton>
-              <MenuList w="100px">
+              <MenuButton
+                as={IconButton}
+                icon={<BiDotsVerticalRounded fontSize={20} />}
+                isRound
+                fontWeight="800"
+                bgColor="#EDF2F7"
+              />
+
+              <MenuList>
                 <Link href={`products/edit/${info.node.id}`}>
                   <MenuItem>Edit</MenuItem>
                 </Link>

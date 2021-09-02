@@ -4,7 +4,7 @@ import { FaDribbble, FaFacebook, FaGithub, FaInstagram, FaTwitter } from 'react-
 
 const Footer: FC = () => (
   <Container maxWidth="1220px">
-    <Flex justifyContent="space-between" p={5} alignItems="center">
+    <Flex justifyContent="space-between" p={5} alignItems="center" fontSize="16px">
       <Box color="#9CA3AF">2020 HOV Onboarding. All rights reserved.</Box>
       <Flex>
         <Box ml="22px">
