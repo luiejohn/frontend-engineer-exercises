@@ -25,7 +25,7 @@ const Nav: FC = () => {
           <Flex alignItems="stretch">
             <Flex fontSize="23px" fontWeight="700" mr={5} alignSelf="center">
               <Link href="/">
-                <Image src="/logo.JPG" alt="me" width="135px" height="35px" />
+                <Image src="/static/logo.JPG" alt="me" width="135px" height="35px" />
               </Link>
             </Flex>
             <Flex alignItems="center" borderBottom={isWithProducts ? '2px solid #6366F1' : '2px solid transparent'}>
