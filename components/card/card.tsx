@@ -18,7 +18,8 @@ import {
 import { DELETE_PRODUCT, GET_PRODUCTS } from 'graphql/queries';
 import Link from 'next/link';
 import { FC, useState } from 'react';
-import { BiCartAlt, BiDotsVerticalRounded } from 'react-icons/bi';
+import { BiDotsVerticalRounded } from 'react-icons/bi';
+import { FaShoppingCart } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { RootState } from 'redux/store';
 
@@ -117,7 +118,7 @@ const Card: FC<IProps> = ({ info }) => {
         </Box>
 
         <Button
-          leftIcon={<BiCartAlt />}
+          leftIcon={<FaShoppingCart />}
           bgColor="#FAF5FF"
           p="8px 0"
           borderRadius="5px"

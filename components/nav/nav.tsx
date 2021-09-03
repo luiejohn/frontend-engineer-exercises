@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex } from '@chakra-ui/react';
+import { Avatar, Box, Button, Container, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -38,7 +38,11 @@ const Nav: FC = () => {
               <Flex alignItems="center">
                 <BiBell color="#9CA3AF" fontSize="23px" />
                 <Box onClick={Logout} cursor="pointer" ml="15px">
-                  Logout
+                  <Avatar
+                    size="sm"
+                    name="User"
+                    src="https://e7.pngegg.com/pngimages/550/997/png-clipart-user-icon-foreigners-avatar-child-face.png"
+                  />
                 </Box>
               </Flex>
             ) : (

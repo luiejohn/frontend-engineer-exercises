@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { AddIcon } from '@chakra-ui/icons';
+import { SmallAddIcon } from '@chakra-ui/icons';
 import { Divider, Heading } from '@chakra-ui/layout';
 import { Box, Button, Flex, Grid, Spinner } from '@chakra-ui/react';
 import Card from '@components/card/card';
@@ -70,7 +70,7 @@ const Products: FC = () => {
           {isLogin ? (
             <Flex mb={2} alignSelf="flex-end">
               <Link href="/products/add">
-                <Button bgColor="#805AD5" color="#fff" leftIcon={<AddIcon />}>
+                <Button bgColor="#805AD5" color="#fff" leftIcon={<SmallAddIcon fontSize="22px" />}>
                   Add Products
                 </Button>
               </Link>
