@@ -8,17 +8,11 @@ import {
   Button,
   Flex,
   Image,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Spinner,
   Text,
   useToast,
 } from '@chakra-ui/react';
+import DeleteModal from '@components/deleteModal/deleteModal';
 import Layout from '@components/Layout';
 import { DELETE_PRODUCT, GET_PRODUCTS_BYID } from 'graphql/queries';
 import Link from 'next/link';
@@ -128,23 +122,7 @@ const ItemPage: FC = () => {
               </Box>
               <Box mb={5}>{data?.node.description}</Box>
             </Box>
-            <Modal isOpen={isModal} onClose={(): void => setModal(false)} isCentered>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Delete Product</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>Are you sure you want to delete this product? You can't undo this afterwards</ModalBody>
-
-                <ModalFooter>
-                  <Button variant="ghost" mr={3} onClick={(): void => setModal(false)}>
-                    Close
-                  </Button>
-                  <Button variant="solid" onClick={handleDeleteProduct} bgColor="#E53E3E" color="#fff">
-                    Delete
-                  </Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
+            <DeleteModal isModal={isModal} setModal={setModal} submitFunc={handleDeleteProduct} />
           </Flex>
         </Flex>
       )}

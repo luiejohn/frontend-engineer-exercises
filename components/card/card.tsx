@@ -1,20 +1,8 @@
 import { useMutation } from '@apollo/client';
 import { Box, Flex } from '@chakra-ui/layout';
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/menu';
-import {
-  Button,
-  IconButton,
-  Image,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useToast,
-} from '@chakra-ui/react';
+import { Button, IconButton, Image, Text, useToast } from '@chakra-ui/react';
+import DeleteModal from '@components/deleteModal/deleteModal';
 import { DELETE_PRODUCT, GET_PRODUCTS } from 'graphql/queries';
 import Link from 'next/link';
 import { FC, useState } from 'react';
@@ -128,24 +116,7 @@ const Card: FC<IProps> = ({ info }) => {
         >
           Add Cart
         </Button>
-
-        <Modal isOpen={isModal} onClose={(): void => setModal(false)} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Delete Product</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>Are you sure you want to delete this product? You can't undo this afterwards</ModalBody>
-
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={(): void => setModal(false)}>
-                Close
-              </Button>
-              <Button variant="solid" onClick={handleDeleteProduct} bgColor="#E53E3E" color="#fff">
-                Delete
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <DeleteModal isModal={isModal} setModal={setModal} submitFunc={handleDeleteProduct} />
       </Flex>
     </Flex>
   );
